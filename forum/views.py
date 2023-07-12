@@ -40,19 +40,19 @@ class ReferenceFileViewSet(viewsets.ModelViewSet):
     queryset = ReferenceFile.objects.all()
     serializer_class = ReferenceFileRequestSerializer
 
-class SummaryViewSet(viewsets.ModelViewSet):
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
+# class SummaryViewSet(viewsets.ModelViewSet):
+#     authentication_classes=[TokenAuthentication]
+#     permission_classes=[IsAuthenticated]
 
-    queryset = Summary.objects.all()
-    serializer_class = SummarySerializer
+#     queryset = Summary.objects.all()
+#     serializer_class = SummarySerializer
 
-class DiscussionGuideViewSet(viewsets.ModelViewSet):
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
+# class DiscussionGuideViewSet(viewsets.ModelViewSet):
+#     authentication_classes=[TokenAuthentication]
+#     permission_classes=[IsAuthenticated]
 
-    queryset = DiscussionGuide.objects.all()
-    serializer_class = DiscussionGuideRequestSerializer
+#     queryset = DiscussionGuide.objects.all()
+#     serializer_class = DiscussionGuideRequestSerializer
 
 class DiscussionAnalytics(APIView):
     authentication_classes=[TokenAuthentication]
@@ -106,30 +106,36 @@ class DiscussionAnalytics(APIView):
             "non_participants": non_participants_count,
             "tags": tags
             }).data)
-
-@api_view(['GET'])
-def discussion_guide_get_by_thread_id(request, thread_id):
-    try:
-        discussion_guide = get_object_or_404(DiscussionGuide.objects.all(), thread=thread_id)
-    except DiscussionGuide.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        return Response(DiscussionGuideRequestSerializer(discussion_guide).data)
-    return Response(DiscussionGuideRequestSerializer(discussion_guide).errors, status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['PUT'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def discussion_guide_update_state(request, pk):
-    try:
-        discussion_guide = DiscussionGuide.objects.get(pk=pk)
-    except DiscussionGuide.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+@api_view(['GET'])
+def thread_get_by_today_month(request):
+    now = datetime.now()
+    threads = Thread.objects.filter(deadline__year=now.year, deadline__month=now.month)
+    return Response(ThreadResponseSerializer(threads, many=True).data)
 
-    if request.method == 'PUT':
-        serializer = DiscussionGuideStateSerializer(discussion_guide, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET'])
+# def discussion_guide_get_by_thread_id(request, thread_id):
+#     try:
+#         discussion_guide = get_object_or_404(DiscussionGuide.objects.all(), thread=thread_id)
+#     except DiscussionGuide.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+
+#     if request.method == 'GET':
+#         return Response(DiscussionGuideRequestSerializer(discussion_guide).data)
+#     return Response(DiscussionGuideRequestSerializer(discussion_guide).errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# @api_view(['PUT'])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# def discussion_guide_update_state(request, pk):
+#     try:
+#         discussion_guide = DiscussionGuide.objects.get(pk=pk)
+#     except DiscussionGuide.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+
+#     if request.method == 'PUT':
+#         serializer = DiscussionGuideStateSerializer(discussion_guide, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
