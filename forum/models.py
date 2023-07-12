@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime    
 
 class Week(models.Model):
     name = models.CharField(max_length=100)
@@ -7,21 +8,12 @@ class Week(models.Model):
         return self.name
 
 class Thread(models.Model):
-    title = models.CharField(max_length=500, default="")
+    title = models.TextField()
+    deadline = models.DateTimeField(default=datetime.now(), blank=True)
+    description = models.TextField(blank=True)
+    mechanism_expectation = models.TextField(blank=True)
+    summary_content = models.TextField(blank=True)
     week = models.ForeignKey(Week, related_name="threads", on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.title
-    
-    @property
-    def week_name(self):
-        return self.week.name
-
-class DiscussionGuide(models.Model):
-    deadline = models.DateTimeField()
-    description = models.TextField()
-    mechanism_expectation = models.TextField()
-    thread = models.OneToOneField(Thread, on_delete=models.CASCADE, related_name="discussion_guide")
 
     class InquiryState(models.TextChoices):
         PHASE1 = 1
@@ -35,20 +27,15 @@ class DiscussionGuide(models.Model):
         choices=InquiryState.choices,
         default=InquiryState.PHASE1
     )
-
-    @property
-    def week_name(self):
-        return self.thread.week.name
+    
+    def __str__(self):
+        return self.title
     
     @property
-    def thread_title(self):
-        return self.thread.title
-
-class Summary(models.Model):
-    content = models.TextField()
-    thread = models.OneToOneField(Thread, on_delete=models.CASCADE, related_name="summary")
+    def week_name(self):
+        return self.week.name
 
 class ReferenceFile(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.TextField()
     url = models.TextField()
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="reference_file")
