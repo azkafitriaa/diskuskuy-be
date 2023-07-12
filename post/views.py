@@ -36,7 +36,7 @@ class NestedReplyPostViewSet(viewsets.ModelViewSet):
     queryset = NestedReplyPost.objects.all()
     serializer_class = NestedReplyPostSerializer
 
-class PostReactionViewSet(APIView):
+class PostLikeViewSet(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
 
@@ -51,6 +51,44 @@ class PostReactionViewSet(APIView):
                 post.likes.add(request.user)
             else:
                 post.likes.remove(request.user)
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PostClapViewSet(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self, request, pk, format=None):
+        try:
+            post = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            if request.user not in post.claps.all():
+                post.claps.add(request.user)
+            else:
+                post.claps.remove(request.user)
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PostLoveViewSet(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self, request, pk, format=None):
+        try:
+            post = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            if request.user not in post.loves.all():
+                post.loves.add(request.user)
+            else:
+                post.loves.remove(request.user)
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

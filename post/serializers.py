@@ -9,6 +9,8 @@ class PostSerializer(serializers.ModelSerializer):
     creator_photo_url = serializers.ReadOnlyField()
     creator_role = serializers.ReadOnlyField()
     number_of_likes = serializers.ReadOnlyField()
+    number_of_claps = serializers.ReadOnlyField()
+    number_of_loves = serializers.ReadOnlyField()
 
     class Meta:
         model = Post

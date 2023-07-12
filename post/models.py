@@ -11,6 +11,8 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now=True, editable=False)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, default=None, related_name="post")
     likes = models.ManyToManyField(User, default=None, blank=True, related_name="likes")
+    claps = models.ManyToManyField(User, default=None, blank=True, related_name="claps")
+    loves = models.ManyToManyField(User, default=None, blank=True, related_name="loves")
 
     def __str__(self):
         return self.content
@@ -35,6 +37,14 @@ class Post(models.Model):
     @property
     def number_of_likes(self):
         return self.likes.count()
+    
+    @property
+    def number_of_claps(self):
+        return self.claps.count()
+    
+    @property
+    def number_of_loves(self):
+        return self.loves.count()
 
 class InitialPost(models.Model):
     thread = models.OneToOneField(Thread, on_delete=models.CASCADE, default=None, related_name="initial_post")

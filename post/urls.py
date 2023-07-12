@@ -11,6 +11,8 @@ router.register('post', views.PostViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('reaction/<int:pk>/', views.PostReactionViewSet.as_view()),
+    path('like/<int:pk>/', views.PostLikeViewSet.as_view()),
+    path('clap/<int:pk>/', views.PostClapViewSet.as_view()),
+    path('love/<int:pk>/', views.PostLoveViewSet.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='post'))
 ]
