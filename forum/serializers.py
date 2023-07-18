@@ -82,14 +82,6 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
             thread=thread
         )
         initial_post.save()
-        # discussion_guide_data = validated_data['discussion_guide']
-        # discussion_guide=DiscussionGuide(
-        #     deadline=discussion_guide_data['deadline'],
-        #     description=discussion_guide_data['description'],
-        #     mechanism_expectation=discussion_guide_data['mechanism_expectation'],
-        #     thread=thread
-        # )
-        # discussion_guide.save()
         reference_file_datas = validated_data['reference_file']
         for reference_file_data in reference_file_datas:
             reference_file=ReferenceFile(
@@ -107,6 +99,7 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
             initial_post = instance.initial_post
             initial_post_post = initial_post.post
             initial_post_post.tag = initial_post_post_data.get('tag', initial_post_post.tag)
+            # coba dicek lagi
             initial_post_post.content = initial_post_post_data.get('content', initial_post_post.content)
             initial_post_post.save()
 
@@ -119,15 +112,10 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
                     ref.url = ref_data.get('url', ref.url)
                 ref.save()
 
-        # if 'discussion_guide' in validated_data:
-        #     discussion_guide_data = validated_data.pop('discussion_guide')
-        #     discussion_guide = instance.discussion_guide
-        #     discussion_guide.deadline = discussion_guide_data.get('deadline', discussion_guide.deadline)
-        #     discussion_guide.description = discussion_guide_data.get('description', discussion_guide.description)
-        #     discussion_guide.mechanism_expectation = discussion_guide_data.get('mechanism_expectation', discussion_guide.mechanism_expectation)
-        #     discussion_guide.save()
-
         instance.title = validated_data.get('title', instance.title)
+        instance.deadline = validated_data.get('deadline', instance.deadline)
+        instance.description = validated_data.get('description', instance.description)
+        instance.mechanism_expectation = validated_data.get('mechanism_expectation', instance.mechanism_expectation)
         instance.save()
 
         return instance
