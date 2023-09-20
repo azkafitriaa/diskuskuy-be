@@ -92,3 +92,25 @@ class PostLoveViewSet(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class InitialPostSeenViewSet(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self, request, pk, format=None):
+        try:
+            initial_post = InitialPost.objects.get(pk=pk)
+        except InitialPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if request.user not in initial_post.seen.all():
+            initial_post.seen.add(request.user)
+        seen = []
+        for user in initial_post.seen.all():
+            custom_user = CustomUser.objects.get(user=user)
+            seen.append({
+                "user_id": user.id,
+                "name":custom_user.name,
+                "role": custom_user.role,
+                "photo_url":custom_user.photo_url
+            })
+        return Response(InitialPostSeenSerializer({"seen": seen}).data)

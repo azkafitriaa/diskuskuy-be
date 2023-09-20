@@ -47,6 +47,7 @@ class Post(models.Model):
         return self.loves.count()
 
 class InitialPost(models.Model):
+    seen = models.ManyToManyField(User, default=None, blank=True, related_name="seen")
     thread = models.OneToOneField(Thread, on_delete=models.CASCADE, default=None, related_name="initial_post")
     post = models.OneToOneField(Post, on_delete=models.CASCADE, default=None, related_name="initial_post")
 
