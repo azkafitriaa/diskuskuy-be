@@ -14,5 +14,6 @@ urlpatterns = [
     path('like/<int:pk>/', views.PostLikeViewSet.as_view()),
     path('clap/<int:pk>/', views.PostClapViewSet.as_view()),
     path('love/<int:pk>/', views.PostLoveViewSet.as_view()),
+    path('initialpost/seen/<int:pk>/', views.InitialPostSeenViewSet.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='post'))
 ]

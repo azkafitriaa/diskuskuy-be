@@ -121,3 +121,6 @@ class InitialPostWeekThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = InitialPost
         fields = ['post']
+
+class InitialPostSeenSerializer(serializers.Serializer):
+    seen = serializers.ListField()
