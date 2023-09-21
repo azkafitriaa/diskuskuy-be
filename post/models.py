@@ -35,6 +35,11 @@ class Post(models.Model):
         return custom_user.role
     
     @property
+    def creator_group(self):
+        custom_user = get_object_or_404(CustomUser.objects.all(), user=self.creator)
+        return custom_user.group.name
+    
+    @property
     def number_of_likes(self):
         return self.likes.count()
     

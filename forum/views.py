@@ -108,9 +108,9 @@ class DiscussionAnalytics(APIView):
             }).data)
     
 @api_view(['GET'])
-def thread_get_by_today_month(request):
+def thread_get_by_today(request):
     now = datetime.now()
-    threads = Thread.objects.filter(deadline__year=now.year, deadline__month=now.month)
+    threads = Thread.objects.filter(deadline__day=now.day)
     return Response(ThreadResponseSerializer(threads, many=True).data)
 
 # @api_view(['GET'])

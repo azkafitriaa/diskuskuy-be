@@ -5,6 +5,7 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
+router.register('group', views.CustomGroupViewSet, basename='CustomGroup')
 
 urlpatterns = [
     path('', include(router.urls)),

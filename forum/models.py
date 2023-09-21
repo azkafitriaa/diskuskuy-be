@@ -1,5 +1,7 @@
 from django.db import models
-from datetime import datetime    
+from datetime import datetime   
+
+from autentikasi.models import CustomGroup
 
 class Week(models.Model):
     name = models.CharField(max_length=100)
@@ -14,6 +16,7 @@ class Thread(models.Model):
     mechanism_expectation = models.TextField(blank=True)
     summary_content = models.TextField(blank=True)
     week = models.ForeignKey(Week, related_name="threads", on_delete=models.CASCADE)
+    group = models.ForeignKey(CustomGroup, default=None, blank=True, null=True, related_name="threads", on_delete=models.CASCADE)
 
     class InquiryState(models.TextChoices):
         PHASE1 = 1
@@ -34,6 +37,10 @@ class Thread(models.Model):
     @property
     def week_name(self):
         return self.week.name
+    
+    @property
+    def group_name(self):
+        return self.group.name
 
 class ReferenceFile(models.Model):
     title = models.TextField()
