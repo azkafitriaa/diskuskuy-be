@@ -125,3 +125,4 @@ class InitialPostWeekThreadSerializer(serializers.ModelSerializer):
 
 class InitialPostSeenSerializer(serializers.Serializer):
     seen = serializers.ListField()
+    first = serializers.BooleanField()
