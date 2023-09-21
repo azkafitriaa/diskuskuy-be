@@ -111,6 +111,7 @@ class InitialPostSeenViewSet(APIView):
                 "user_id": user.id,
                 "name":custom_user.name,
                 "role": custom_user.role,
+                "group": custom_user.group.name if custom_user.group else None,
                 "photo_url":custom_user.photo_url
             })
         return Response(InitialPostSeenSerializer({"seen": seen}).data)

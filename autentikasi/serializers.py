@@ -24,6 +24,7 @@ class ProfileSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
     name = serializers.CharField()
     nim = serializers.CharField()
+    group = serializers.CharField()
     photo_url = serializers.CharField()
 
 class LecturerCustomUserSerializer(serializers.ModelSerializer):
@@ -82,4 +83,11 @@ class LoginResponseSerializer(serializers.Serializer):
     token = serializers.CharField()
     user_id = serializers.IntegerField()
     role = serializers.CharField()
+    group = serializers.CharField()
     photo_url = serializers.CharField()
+
+class CustomGroupSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField()
+    class Meta:
+        model = CustomGroup
+        fields = ('id', 'name')

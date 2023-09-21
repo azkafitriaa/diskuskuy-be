@@ -28,6 +28,7 @@ class LoginView(views.APIView):
             "token": token.key,
             "user_id": user.id, 
             "role": custom_user.role,
+            "group": custom_user.group.id if custom_user.group else None,
             "photo_url": custom_user.photo_url
             }).data)
     
@@ -52,6 +53,7 @@ class ProfileView(views.APIView):
                     "user_id": request.user.id,
                     "name":custom_user.name,
                     "nim":lecturer.nim,
+                    "group": None,
                     "photo_url":custom_user.photo_url,
                 }).data)
             elif (custom_user.role == 'student'):
@@ -60,6 +62,7 @@ class ProfileView(views.APIView):
                     "user_id": request.user.id,
                     "name":custom_user.name,
                     "nim":student.npm,
+                    "group": custom_user.group.name if custom_user.group else None,
                     "photo_url":custom_user.photo_url,
                 }).data)
         except CustomUser.DoesNotExist or Lecturer.DoesNotExist or Student.DoesNotExist:
@@ -85,3 +88,10 @@ class LecturerView(views.APIView):
     def get(self, request):
         lecturers = Lecturer.objects.all()
         return Response(LecturerSerializer(lecturers, many=True).data)
+    
+class CustomGroupViewSet(viewsets.ModelViewSet):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    queryset = CustomGroup.objects.all()
+    serializer_class = CustomGroupSerializer

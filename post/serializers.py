@@ -8,6 +8,7 @@ class PostSerializer(serializers.ModelSerializer):
     creator_name = serializers.ReadOnlyField()
     creator_photo_url = serializers.ReadOnlyField()
     creator_role = serializers.ReadOnlyField()
+    creator_group = serializers.ReadOnlyField()
     number_of_likes = serializers.ReadOnlyField()
     number_of_claps = serializers.ReadOnlyField()
     number_of_loves = serializers.ReadOnlyField()

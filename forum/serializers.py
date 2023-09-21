@@ -54,6 +54,7 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
     # summary = SummaryThreadSerializer(read_only=True)
     # discussion_guide = DiscussionGuideThreadSerializer()
     week_name = serializers.ReadOnlyField()
+    group_name = serializers.ReadOnlyField()
     
     class Meta:
         model = Thread
@@ -61,12 +62,16 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         week = get_object_or_404(Week.objects.all(), pk=validated_data['week'].id)
+        group = None
+        if validated_data['group']:
+            group = get_object_or_404(CustomGroup.objects.all(), pk=validated_data['group'].id)
         thread = Thread(
             title=validated_data['title'],
             deadline=validated_data['deadline'],
             description=validated_data['description'],
             mechanism_expectation=validated_data['mechanism_expectation'],
-            week=week
+            week=week,
+            group=group if group else None,
         )
         thread.save()
         initial_post_data = validated_data['initial_post']
@@ -116,17 +121,19 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
         instance.deadline = validated_data.get('deadline', instance.deadline)
         instance.description = validated_data.get('description', instance.description)
         instance.mechanism_expectation = validated_data.get('mechanism_expectation', instance.mechanism_expectation)
+        instance.state = validated_data.get('state', instance.state)
         instance.save()
 
         return instance
 
 class ThreadResponseSerializer(serializers.ModelSerializer): #buat tampilan di week
     initial_post = InitialPostWeekThreadSerializer(read_only=True)
+    group_name = serializers.ReadOnlyField()
     # discussion_guide = DiscussionGuideWeekThreadSerializer(read_only=True)
     
     class Meta:
         model = Thread
-        fields = ('id', 'title', 'deadline', 'description', 'mechanism_expectation', 'summary_content', 'initial_post')
+        fields = ('id', 'title', 'deadline', 'description', 'mechanism_expectation', 'summary_content', 'initial_post', 'group_name', 'group')
 
 class WeekSerializer(serializers.ModelSerializer):
     threads = ThreadResponseSerializer(read_only=True,many=True)
