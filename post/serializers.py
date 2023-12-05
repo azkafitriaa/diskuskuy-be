@@ -57,14 +57,7 @@ class NestedReplyPostSerializer(serializers.ModelSerializer):
             post.content = post_data.get('content', post.content)
             post.save()
             return instance
-        return Response(status=status.HTTP_400_BAD_REQUEST) 
-
-# class NestedReplyPostResponseSerializer(serializers.ModelSerializer):
-#     post = PostSerializer(read_only=True)
-
-#     class Meta:
-#         model = NestedReplyPost
-#         fields = ('id', 'post')        
+        return Response(status=status.HTTP_400_BAD_REQUEST)      
 
 class ReplyPostSerializer(serializers.ModelSerializer):
     nested_reply_post = NestedReplyPostSerializer(read_only=True, many=True)
@@ -101,13 +94,6 @@ class ReplyPostSerializer(serializers.ModelSerializer):
             return instance
         return Response(status=status.HTTP_400_BAD_REQUEST) 
 
-# class ReplyPostResponseSerializer(serializers.ModelSerializer):
-#     post = PostSerializer(read_only=True)
-
-#     class Meta:
-#         model = ReplyPost
-#         fields = ('id', 'post')
-
 class InitialPostSerializer(serializers.ModelSerializer):
     reply_post = ReplyPostSerializer(read_only=True, many=True)
     post = PostSerializer()
@@ -124,8 +110,3 @@ class InitialPostWeekThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = InitialPost
         fields = ['post']
-
-# class InitialPostSeenSerializer(serializers.Serializer):
-#     seen = serializers.ListField()
-#     first = serializers.BooleanField()
-#     seen_user_info = serializers.ReadOnlyField()

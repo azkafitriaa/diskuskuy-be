@@ -13,47 +13,11 @@ class ReferenceFileRequestSerializer(serializers.ModelSerializer):
 class ReferenceFileThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReferenceFile
-        fields = ('id','title', 'url')
-
-# class SummarySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Summary
-#         fields = '__all__'
-
-# class SummaryThreadSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Summary
-#         fields = ('id','content')
-
-# class DiscussionGuideRequestSerializer(serializers.ModelSerializer):
-#     thread_title = serializers.ReadOnlyField()
-#     week_name = serializers.ReadOnlyField()
-
-#     class Meta:
-#         model = DiscussionGuide
-#         fields = '__all__'
-
-# class DiscussionGuideStateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DiscussionGuide
-#         fields = ('id','state')
-
-# class DiscussionGuideThreadSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DiscussionGuide
-#         fields = ('id','deadline','description','mechanism_expectation', 'state')
-#         read_only_fields = ['state']
-
-# class DiscussionGuideWeekThreadSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DiscussionGuide
-#         fields = ['deadline']
+        fields = ('id', 'title', 'url')
 
 class ThreadRequestSerializer(serializers.ModelSerializer):
     initial_post = InitialPostSerializer()
     reference_file = ReferenceFileThreadSerializer(many=True)
-    # summary = SummaryThreadSerializer(read_only=True)
-    # discussion_guide = DiscussionGuideThreadSerializer()
     week_name = serializers.ReadOnlyField()
     group_name = serializers.ReadOnlyField()
     
@@ -127,27 +91,26 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
 
         return instance
 
-class ThreadResponseSerializer(serializers.ModelSerializer): #buat tampilan di week
+class ThreadResponseSerializer(serializers.ModelSerializer):
     initial_post = InitialPostWeekThreadSerializer(read_only=True)
     group_name = serializers.ReadOnlyField()
     user_done = UserIdSerializer(many=True)
-    # discussion_guide = DiscussionGuideWeekThreadSerializer(read_only=True)
     
     class Meta:
         model = Thread
         fields = ('id', 'title', 'deadline', 'description', 'mechanism_expectation', 'summary_content', 'initial_post', 'group_name', 'group', 'user_done')
-
-class WeekSerializer(serializers.ModelSerializer):
-    threads = ThreadResponseSerializer(read_only=True,many=True)
-    class Meta:
-        model = Week
-        fields = ('id','name','threads')
 
 class DiscussionAnalyticsSerializer(serializers.Serializer):
     replies = serializers.IntegerField()
     participants = serializers.IntegerField()
     non_participants = serializers.IntegerField()
     tags = serializers.DictField()
+
+class WeekSerializer(serializers.ModelSerializer):
+    threads = ThreadResponseSerializer(read_only=True,many=True)
+    class Meta:
+        model = Week
+        fields = ('id', 'name', 'threads')
 
 class BreadcrumbSerializer(serializers.ModelSerializer):
     week_name = serializers.ReadOnlyField()

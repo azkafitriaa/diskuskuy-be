@@ -145,19 +145,6 @@ class InitialPostSeenViewSet(APIView):
             initial_post = InitialPost.objects.get(pk=pk)
         except InitialPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        # first = False
         if request.user not in initial_post.seen.all():
             initial_post.seen.add(request.user)
-            # first = True
         return Response(CustomUserSerializer(initial_post.seen_user_info, many=True).data)
-        # seen = []
-        # for user in initial_post.seen.all():
-        #     custom_user = CustomUser.objects.get(user=user)
-        #     seen.append({
-        #         "user_id": user.id,
-        #         "name":custom_user.name,
-        #         "role": custom_user.role,
-        #         "group": custom_user.group.name if custom_user.group else None,
-        #         "photo_url":custom_user.photo_url
-        #     })
-        # return Response(InitialPostSeenSerializer({"seen": seen, "first": first}).data)
