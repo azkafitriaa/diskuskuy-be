@@ -1,3 +1,4 @@
+from rest_framework import views
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -8,6 +9,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
+from django.conf import settings
 
 from .serializers import *
 from .models import *
@@ -107,11 +112,33 @@ class DiscussionAnalytics(APIView):
             "tags": tags
             }).data)
     
-@api_view(['GET'])
-def thread_get_by_today(request):
-    now = datetime.now()
-    threads = Thread.objects.filter(deadline__day=now.day)
-    return Response(ThreadResponseSerializer(threads, many=True).data)
+class ThreadTodayView(views.APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    @method_decorator(vary_on_cookie)
+    def get(self, request):
+        now = datetime.now()
+        threads = Thread.objects.filter(deadline__day=now.day)
+        return Response(ThreadResponseSerializer(threads, many=True).data)
+    
+class ThreadThisMonthView(views.APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    @method_decorator(vary_on_cookie)
+    def get(self, request):
+        now = datetime.now()
+        threads = Thread.objects.filter(deadline__month=now.month)
+        return Response(ThreadResponseSerializer(threads, many=True).data)
+
+# @api_view(['GET'])
+# def thread_get_by_today(request):
+#     now = datetime.now()
+#     threads = Thread.objects.filter(deadline__day=now.day)
+#     return Response(ThreadResponseSerializer(threads, many=True).data)
 
 # @api_view(['GET'])
 # def discussion_guide_get_by_thread_id(request, thread_id):

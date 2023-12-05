@@ -13,7 +13,8 @@ router.register('Breadcrumb', views.BreadcrumbViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('thread-today/', views.thread_get_by_today),
+    path('thread-today/', views.ThreadTodayView.as_view()),
+    path('thread-this-month/', views.ThreadThisMonthView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('analytics/<int:thread_id>/', views.DiscussionAnalytics.as_view(), name="analytics"),
     # path('<int:thread_id>/discussion-guide/', views.discussion_guide_get_by_thread_id),

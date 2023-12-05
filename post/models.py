@@ -56,6 +56,15 @@ class InitialPost(models.Model):
     thread = models.OneToOneField(Thread, on_delete=models.CASCADE, default=None, related_name="initial_post")
     post = models.OneToOneField(Post, on_delete=models.CASCADE, default=None, related_name="initial_post")
 
+    @property
+    def seen_user_info(self):
+        # temp = []
+        # for user in self.seen.all():
+        #     temp.add(CustomUser.objects.get(user=user))
+        # print(temp)
+        return [CustomUser.objects.get(user=user) for user in self.seen.all()]
+        # return temp]
+
 class ReplyPost(models.Model):
     initial_post = models.ForeignKey(InitialPost, on_delete=models.CASCADE, default=None, related_name="reply_post")
     post = models.OneToOneField(Post, on_delete=models.CASCADE, default=None, related_name="reply_post")
