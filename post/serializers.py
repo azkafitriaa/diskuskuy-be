@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from .models import *
+from autentikasi.serializers import CustomUserSerializer
 
 class PostSerializer(serializers.ModelSerializer):
     creator_name = serializers.ReadOnlyField()
@@ -110,6 +111,7 @@ class ReplyPostSerializer(serializers.ModelSerializer):
 class InitialPostSerializer(serializers.ModelSerializer):
     reply_post = ReplyPostSerializer(read_only=True, many=True)
     post = PostSerializer()
+    seen_user_info = CustomUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = InitialPost
@@ -123,6 +125,7 @@ class InitialPostWeekThreadSerializer(serializers.ModelSerializer):
         model = InitialPost
         fields = ['post']
 
-class InitialPostSeenSerializer(serializers.Serializer):
-    seen = serializers.ListField()
-    first = serializers.BooleanField()
+# class InitialPostSeenSerializer(serializers.Serializer):
+#     seen = serializers.ListField()
+#     first = serializers.BooleanField()
+#     seen_user_info = serializers.ReadOnlyField()

@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
@@ -15,10 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
         ]
 
-class UpdateCustomUserPhotoRequestSerializer(serializers.ModelSerializer):
+class UserIdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
-        fields = ['photo_url']
+        model = User
+        fields = ['id']
 
 class ProfileSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()
@@ -27,13 +26,18 @@ class ProfileSerializer(serializers.Serializer):
     group = serializers.CharField()
     photo_url = serializers.CharField()
 
-class LecturerCustomUserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['name', 'photo_url']
+        fields = '__all__'
+
+class UpdateCustomUserPhotoRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['photo_url']
 
 class LecturerSerializer(serializers.ModelSerializer):
-    lecturer = LecturerCustomUserSerializer()
+    lecturer = CustomUserSerializer()
 
     class Meta:
         model = Lecturer

@@ -8,7 +8,10 @@ from django.http import HttpResponse
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
+from django.conf import settings
 
 from .serializers import *
 from .models import CustomUser
@@ -85,6 +88,8 @@ class LecturerView(views.APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    @method_decorator(vary_on_cookie)
     def get(self, request):
         lecturers = Lecturer.objects.all()
         return Response(LecturerSerializer(lecturers, many=True).data)

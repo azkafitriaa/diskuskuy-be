@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from datetime import datetime   
 
@@ -17,6 +18,7 @@ class Thread(models.Model):
     summary_content = models.TextField(blank=True)
     week = models.ForeignKey(Week, related_name="threads", on_delete=models.CASCADE)
     group = models.ForeignKey(CustomGroup, default=None, blank=True, null=True, related_name="threads", on_delete=models.CASCADE)
+    user_done = models.ManyToManyField(User, default=None, blank=True, related_name="user_done")
 
     class InquiryState(models.TextChoices):
         PHASE1 = 1

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from autentikasi.serializers import UserIdSerializer
 from post.serializers import *
 from django.shortcuts import get_object_or_404
 from datetime import datetime
@@ -129,11 +130,12 @@ class ThreadRequestSerializer(serializers.ModelSerializer):
 class ThreadResponseSerializer(serializers.ModelSerializer): #buat tampilan di week
     initial_post = InitialPostWeekThreadSerializer(read_only=True)
     group_name = serializers.ReadOnlyField()
+    user_done = UserIdSerializer(many=True)
     # discussion_guide = DiscussionGuideWeekThreadSerializer(read_only=True)
     
     class Meta:
         model = Thread
-        fields = ('id', 'title', 'deadline', 'description', 'mechanism_expectation', 'summary_content', 'initial_post', 'group_name', 'group')
+        fields = ('id', 'title', 'deadline', 'description', 'mechanism_expectation', 'summary_content', 'initial_post', 'group_name', 'group', 'user_done')
 
 class WeekSerializer(serializers.ModelSerializer):
     threads = ThreadResponseSerializer(read_only=True,many=True)
