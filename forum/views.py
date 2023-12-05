@@ -1,10 +1,6 @@
 from rest_framework import views
-from django.db.models import Count
 from django.shortcuts import get_object_or_404
-from rest_framework import status
 from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
@@ -44,20 +40,6 @@ class ReferenceFileViewSet(viewsets.ModelViewSet):
 
     queryset = ReferenceFile.objects.all()
     serializer_class = ReferenceFileRequestSerializer
-
-# class SummaryViewSet(viewsets.ModelViewSet):
-#     authentication_classes=[TokenAuthentication]
-#     permission_classes=[IsAuthenticated]
-
-#     queryset = Summary.objects.all()
-#     serializer_class = SummarySerializer
-
-# class DiscussionGuideViewSet(viewsets.ModelViewSet):
-#     authentication_classes=[TokenAuthentication]
-#     permission_classes=[IsAuthenticated]
-
-#     queryset = DiscussionGuide.objects.all()
-#     serializer_class = DiscussionGuideRequestSerializer
 
 class DiscussionAnalytics(APIView):
     authentication_classes=[TokenAuthentication]
@@ -112,6 +94,18 @@ class DiscussionAnalytics(APIView):
             "tags": tags
             }).data)
     
+class ThreadThisMonthView(views.APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    @method_decorator(vary_on_cookie)
+    def get(self, request):
+        now = datetime.now()
+        threads = Thread.objects.filter(deadline__month=now.month)
+        print(threads)
+        return Response(ThreadResponseSerializer(threads, many=True).data)
+    
 class ThreadTodayView(views.APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -123,46 +117,3 @@ class ThreadTodayView(views.APIView):
         threads = Thread.objects.filter(deadline__day=now.day)
         return Response(ThreadResponseSerializer(threads, many=True).data)
     
-class ThreadThisMonthView(views.APIView):
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
-
-    @method_decorator(cache_page(settings.CACHE_TTL))
-    @method_decorator(vary_on_cookie)
-    def get(self, request):
-        now = datetime.now()
-        threads = Thread.objects.filter(deadline__month=now.month)
-        return Response(ThreadResponseSerializer(threads, many=True).data)
-
-# @api_view(['GET'])
-# def thread_get_by_today(request):
-#     now = datetime.now()
-#     threads = Thread.objects.filter(deadline__day=now.day)
-#     return Response(ThreadResponseSerializer(threads, many=True).data)
-
-# @api_view(['GET'])
-# def discussion_guide_get_by_thread_id(request, thread_id):
-#     try:
-#         discussion_guide = get_object_or_404(DiscussionGuide.objects.all(), thread=thread_id)
-#     except DiscussionGuide.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-
-#     if request.method == 'GET':
-#         return Response(DiscussionGuideRequestSerializer(discussion_guide).data)
-#     return Response(DiscussionGuideRequestSerializer(discussion_guide).errors, status=status.HTTP_400_BAD_REQUEST)
-    
-# @api_view(['PUT'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
-# def discussion_guide_update_state(request, pk):
-#     try:
-#         discussion_guide = DiscussionGuide.objects.get(pk=pk)
-#     except DiscussionGuide.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-
-#     if request.method == 'PUT':
-#         serializer = DiscussionGuideStateSerializer(discussion_guide, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

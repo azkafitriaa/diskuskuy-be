@@ -6,7 +6,7 @@ from autentikasi.models import CustomUser
 from django.shortcuts import get_object_or_404
 
 class Post(models.Model):
-    tag = models.CharField(max_length=100, default="Pemicu")
+    tag = models.CharField(max_length=100, default="pertanyaan")
     content = HTMLField(default="")
     date = models.DateTimeField(auto_now=True, editable=False)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, default=None, related_name="post")
@@ -58,12 +58,7 @@ class InitialPost(models.Model):
 
     @property
     def seen_user_info(self):
-        # temp = []
-        # for user in self.seen.all():
-        #     temp.add(CustomUser.objects.get(user=user))
-        # print(temp)
         return [CustomUser.objects.get(user=user) for user in self.seen.all()]
-        # return temp]
 
 class ReplyPost(models.Model):
     initial_post = models.ForeignKey(InitialPost, on_delete=models.CASCADE, default=None, related_name="reply_post")
